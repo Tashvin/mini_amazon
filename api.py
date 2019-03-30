@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from models.model import user_exists, create_user, login_user
+from models.model import user_exists, create_user, login_user, buyer_products, seller_products, product_exists, add_product, add_to_cart
 
 app = Flask(__name__)
 app.config['SECRET_KEY']  = 'hello'
@@ -76,6 +76,36 @@ def signup():
 		return "user exists already. enter another username"
 	else:
 		return redirect(url_for('home'))
+
+@app.route('/seller',methods = ['POST','GET'])
+
+def seller():
+
+	if request.method == 'POST':
+		product_info = {}
+
+		product_info['name'] = request.form['name']
+		product_info['price'] = int(request.form['price'])
+		product_info['seller'] = session['username']
+		product_info['description'] = request.form['description']
+
+		if product_exists(product_info['name']) is False:
+			add_product(product_info)
+			return redirect(url_for('products'))
+		return "product already exists. Go back and enter another product"
+		
+@app.route('/products')
+def products():
+
+	if session['c_type'] == 'buyer':
+		return render_template('products.html',products = buyer_products())
+	return render_template('products.html',products = seller_products(session['username']))
+
+@app.route('/addcart', methods=['POST'])
+def add_cart():
+	product_id = str(request.form['id'])
+	add_to_cart(product_id,session['username'])
+	return redirect(url_for('home'))
 
 @app.route('/logout')
 def logout():
