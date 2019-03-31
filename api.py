@@ -105,7 +105,21 @@ def products():
 def add_cart():
 	product_id = str(request.form['id'])
 	add_to_cart(product_id,session['username'])
-	return redirect(url_for('home'))
+	return redirect(url_for('cart'))
+
+@app.route('/removecart',methods=['POST'])
+def remove_cart():
+
+	product_id = str(request.form['id'])
+	remove_from_cart(product_id,session['username'])
+	return redirect(url_for('cart'))
+
+@app.route('/cart')
+def cart():
+
+	temp = cart_info(session['username'])
+
+	
 
 @app.route('/logout')
 def logout():

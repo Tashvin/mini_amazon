@@ -1,0 +1,25 @@
+{%extends 'layout.html'%}
+
+{%block body%}
+
+<h3> Products </h3>
+
+{% for product_info,quantity in cart %}
+
+<ul>
+<li><b> product name </b> : {{product_info['name']}} </li>
+<li><b> product description </b> : {{product_info['description']}} </li>
+<li><b> product price </b> : {{product_info['price']}} </li>
+<li><b> product seller </b> {{product_info['seller']}} </li>
+<li><b></b></li>
+{%endif%}
+<form action="/addcart" method="POST">
+	<input type="hidden" name="id" value="{{product['_id']}}">
+	<input type="submit" value="add to cart">
+</form>
+
+</ul>
+
+{% endfor %}
+
+{%endblock body%}

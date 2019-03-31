@@ -41,10 +41,29 @@ def seller_products(username):
 	return result
 
 def add_to_cart(product_id,username):
-	db['users'].update({'username':username},{"$addToSet":{"cart":{"$each":[product_id]}}})
-	
+	query = {'username':username}
+	result = db['users'].find_one(query)
 
-# db.inventory.update(
-#    { _id: 2 },
-#    { $addToSet: { tags: { $each: [ "camera", "electronics", "accessories" ] } } }
-#  )
+	if result['cart'].get(product_id):
+		db['users'].update(({'username'}:username),{"$inc":{f"cart.{product_id}":1}})
+		return True
+	db['users'].update(('username':username),{"$set":{f"cart.{product_id}":1}})
+
+def remove_from_cart(product_id,username):
+	query = {'username':username}
+	result = db['users'].find_one(query)
+
+	if result['cart'].get(product_id)<=1:
+		db['users'].update(({'username'}:username),{"$unset":{f"cart.{product_id}":1}})
+		return True
+	db['users'].update(('username':username),{"$inc":{f"cart.{product_id}":1}})
+
+def cart_info(username):
+	query = {'username':username}
+	result = db['users'].find_one(query)['cart'].keys()
+
+	products = []
+	quantity = []
+	for product_id in result:
+		products.append()
+	
